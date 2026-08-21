@@ -1,24 +1,23 @@
 ﻿{
-    "manifest_version":  5,
-    "tasks":  [
-                  {
-                      "id":  "hello-world-demo-v1",
-                      "type":  "script",
-                      "source":  "scripts/Invoke-HelloWorld.ps1",
-                      "sha256":  "DFE42A8A09D317E823BB5F062EF77C3EAAD62C220B5D0594DEE0B666DFFFD446",
-                      "arguments":  "",
-                      "targets":  {
-                                      "projects":  [
-                                                       "*"
-                                                   ],
-                                      "sites":  [
-                                                    "*"
-                                                ]
-                                  },
-                      "window":  "",
-                      "run_once":  true,
-                      "timeout_minutes":  5
-                  }
-              ]
+  "manifest_version": 6,
+  "tasks": [
+    {
+      "id": "hello-world-demo-v1",
+      "type": "script",
+      "source": "scripts/Invoke-HelloWorld.ps1",
+      "sha256": "DFE42A8A09D317E823BB5F062EF77C3EAAD62C220B5D0594DEE0B666DFFFD446",
+      "arguments": "",
+      "targets": {
+        "projects": [
+          "*"
+        ],
+        "sites": [
+          "*"
+        ]
+      },
+      "window": "",
+      "run_once": true,
+      "timeout_minutes": 5
+    }
+  ]
 }
-
