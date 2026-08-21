@@ -243,7 +243,7 @@ Write-Log "Identity: machine=$($identity.Machine) site=$($identity.Site) project
 # 1. Fetch the manifest (cache-busting query param avoids stale CDN copies).
 try {
     $manifestUrl = "$RepoBase/manifest.json?t=$(Get-Date -UFormat %s)"
-    $manifest = Invoke-RestMethod -Uri $manifestUrl -TimeoutSec 60
+    $manifest = Invoke-RestMethod -Uri $manifestUrl -TimeoutSec 60 | ConvertFrom-Json
 }
 catch {
     Write-Log "Could not fetch manifest: $($_.Exception.Message). Exiting; will retry tomorrow."
