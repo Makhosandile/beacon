@@ -17,8 +17,8 @@
 # ============================================================
 #  CONFIGURATION - edit these for your fleet
 # ============================================================
-
-$RepoBase      = 'https://raw.githubusercontent.com/YOUR-ORG/fleet-repo/main'
+\
+$RepoBase      = 'https://raw.githubusercontent.com/Makhosandile/beacon/main'
 $ReportUrl     = 'https://script.google.com/macros/s/YOUR-DEPLOYMENT-ID/exec'
 $AgentRoot     = 'C:\ProgramData\FleetAgent'
 $StateFile     = Join-Path $AgentRoot 'state.json'
