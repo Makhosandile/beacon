@@ -5,7 +5,7 @@
                       "id":  "hello-world-demo-v1",
                       "type":  "script",
                       "source":  "scripts/Invoke-HelloWorld.ps1",
-                      "sha256":  "749F12C2CEDE9B877D8252E88B1432525B7861389A64631B7FE3E9FF3DDD2B1D",
+                      "sha256":  "DFE42A8A09D317E823BB5F062EF77C3EAAD62C220B5D0594DEE0B666DFFFD446",
                       "arguments":  "",
                       "targets":  {
                                       "projects":  [
@@ -21,3 +21,4 @@
                   }
               ]
 }
+
