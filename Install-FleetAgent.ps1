@@ -4,6 +4,54 @@
 #>
 #Requires -RunAsAdministrator
 
+# ============================================================
+#  1. SHARED FUNCTIONS
+# ============================================================
+function Get-MachineIdentity {
+    $identity = [pscustomobject]@{
+        Machine = $env:COMPUTERNAME
+        Site    = 'unknown'
+        Project = 'unknown'
+    }
+
+    # 1. Environment Variables
+    if (-not [string]::IsNullOrWhiteSpace($env:FLEET_SITE)) {
+        $identity.Site = $env:FLEET_SITE
+        $identity.Project = $env:FLEET_PROJECT
+        return $identity
+    }
+
+    # 2. Local Application API
+    try {
+        $config = Invoke-RestMethod -Uri 'http://localhost:7000/config' -TimeoutSec 5 -ErrorAction Stop
+        if (-not [string]::IsNullOrWhiteSpace($config.site)) {
+            $identity.Site = $config.site
+            $identity.Project = $config.project
+            return $identity
+        }
+    }
+    catch {}
+
+    # 3. JSON Fallback
+    $startupJson = 'C:\qure\startup.json'
+    if (Test-Path $startupJson) {
+        try {
+            $config = Get-Content $startupJson -Raw | ConvertFrom-Json
+            if (-not [string]::IsNullOrWhiteSpace($config.site)) {
+                $identity.Site = $config.site
+                $identity.Project = $config.project
+                return $identity
+            }
+        }
+        catch {}
+    }
+
+    return $identity
+}
+
+# ============================================================
+#  2. INSTALLATION LOGIC
+# ============================================================
 $AgentRoot   = 'C:\ProgramData\FleetAgent'
 $AgentScript = Join-Path $AgentRoot 'Fleet-Agent.ps1'
 $TaskName    = 'FleetAgent-DailyPull'
@@ -44,4 +92,22 @@ Register-ScheduledTask `
     -Settings  $settings | Out-Null
 
 Write-Host "Scheduled task '$TaskName' registered (daily 02:00 + startup)."
-Write-Host "Install complete. First run: Start-ScheduledTask -TaskName '$TaskName'"
+
+
+# ============================================================
+#  3. VERIFY AND DISPLAY IDENTITY
+# ============================================================
+$identity = Get-MachineIdentity
+
+Write-Host ""
+Write-Host "=================================================" -ForegroundColor Cyan
+Write-Host "      Fleet Agent Successfully Deployed!         " -ForegroundColor Green
+Write-Host "=================================================" -ForegroundColor Cyan
+Write-Host "  Machine Name : $($identity.Machine)" -ForegroundColor White
+Write-Host "  Assigned Site: $($identity.Site)" -ForegroundColor White
+Write-Host "  Project      : $($identity.Project)" -ForegroundColor White
+Write-Host "=================================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "To monitor the first run, execute:"
+Write-Host "Start-ScheduledTask -TaskName '$TaskName'" -ForegroundColor Yellow
+Write-Host "Get-Content -Path 'C:\ProgramData\FleetAgent\agent.log' -Wait" -ForegroundColor Yellow
