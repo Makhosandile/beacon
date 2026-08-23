@@ -1,16 +1,13 @@
 <#
 .SYNOPSIS
     Fleet pull agent.
-    Runs once per day (scheduled task). Checks the central GitHub repo for
-    a new manifest, downloads and applies any tasks that target this machine,
-    and reports the outcome to a central endpoint.
 #>
 
 # ============================================================
-#  CONFIGURATION - edit these for your fleet
+#  CONFIGURATION
 # ============================================================
 $RepoBase      = 'https://raw.githubusercontent.com/Makhosandile/beacon/main'
-$ReportUrl     = 'https://script.google.com/macros/s/YOUR-DEPLOYMENT-ID/exec'
+$ReportUrl     = 'https://script.google.com/macros/s/AKfycbwsbVhGeW74KSvV5hmSUdaO9e7gw0MbAkEAmHj5dwAMIGOSh-bM0ky8QEURY3LMVXfP/exec'
 $AgentRoot     = 'C:\ProgramData\FleetAgent'
 $StateFile     = Join-Path $AgentRoot 'state.json'
 $LogFile       = Join-Path $AgentRoot 'agent.log'
@@ -61,9 +58,8 @@ function Get-MachineIdentity {
     # 2. Local Application API
     try {
         $config = Invoke-RestMethod -Uri 'http://localhost:7000/config' -TimeoutSec 5 -ErrorAction Stop
-        if (-not [string]::IsNullOrWhiteSpace($config.site)) {
-            $identity.Site = $config.site
-            $identity.Project = $config.project
+        if (-not [string]::IsNullOrWhiteSpace($config.api.sitename)) {
+            $identity.Site = $config.api.sitename
             Write-Log "Identity sourced from local API."
             return $identity
         }
@@ -77,9 +73,8 @@ function Get-MachineIdentity {
     if (Test-Path $startupJson) {
         try {
             $config = Get-Content $startupJson -Raw | ConvertFrom-Json
-            if (-not [string]::IsNullOrWhiteSpace($config.site)) {
-                $identity.Site = $config.site
-                $identity.Project = $config.project
+            if (-not [string]::IsNullOrWhiteSpace($config.api.sitename)) {
+                $identity.Site = $config.api.sitename
                 Write-Log "Identity sourced from startup.json."
                 return $identity
             }
